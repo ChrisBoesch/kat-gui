@@ -191,10 +191,10 @@ function SchoolController($scope,$resource){
 
           $resource('/jsonapi/schools/SG').get({},function(response){
               $scope.schools = response;
+              $scope.supported_schools = $scope.schools.Secondary.concat($scope.schools.Tertiary).concat($scope.schools.University);
 
               if($scope.filter_schooltype == "ALL"){
-                $scope.supported_schools = $scope.schools.Secondary.concat($scope.schools.Tertiary).concat($scope.schools.University);
-
+                
                 for (var i = 0; i < $scope.supported_schools.length; i++) {
                   var temp = $scope.supported_schools[i].id;
                   var schTotal = 0;
@@ -224,7 +224,7 @@ function SchoolController($scope,$resource){
                     }
                   };
 
-                  var schMsg = $scope.supported_schools[i].name + "<br/> Total registrations: " + schTotal;
+                  var schMsg = $scope.schools.University[i].name + "<br/> Total registrations: " + schTotal;
 
                   var marker = {latitude:$scope.schools.University[i].latitude, longitude:$scope.schools.University[i].longitude, infoWindow:schMsg};
                   $scope.schoolMarkers.push(marker);
@@ -240,7 +240,7 @@ function SchoolController($scope,$resource){
                     }
                   };
 
-                  var schMsg = $scope.supported_schools[i].name + "<br/> Total registrations: " + schTotal;
+                  var schMsg = $scope.schools.Tertiary[i].name + "<br/> Total registrations: " + schTotal;
 
                   var marker = {latitude:$scope.schools.Tertiary[i].latitude, longitude:$scope.schools.Tertiary[i].longitude, infoWindow:schMsg};
                   $scope.schoolMarkers.push(marker);
@@ -256,7 +256,7 @@ function SchoolController($scope,$resource){
                     }
                   };
 
-                  var schMsg = $scope.supported_schools[i].name + "<br/> Total registrations: " + schTotal;
+                  var schMsg = $scope.schools.Secondary[i].name + "<br/> Total registrations: " + schTotal;
 
                   var marker = {latitude:$scope.schools.Secondary[i].latitude, longitude:$scope.schools.Secondary[i].longitude, infoWindow:schMsg};
                   $scope.schoolMarkers.push(marker);
