@@ -17,7 +17,7 @@ function SchoolController($scope,$resource){
         $scope.filter_school = "ALL";
         
         $scope.supported_years = ["ALL",2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016];
-        $scope.supported_schooltypes = ['ALL','Secondary','Tertiary','University'];
+        $scope.supported_schooltypes = ['ALL','Secondary','Tertiary','University','Registered Schools'];
         $scope.supported_subtypes = ['ALL','JC','Poly'];
         $scope.supported_schools = [];//[{"id":"ALL","name":"ALL"},{"id":1,"name":"A"},{"id":2,"name":"B"}];
 
@@ -260,6 +260,26 @@ function SchoolController($scope,$resource){
 
                   var marker = {latitude:$scope.schools.Secondary[i].latitude, longitude:$scope.schools.Secondary[i].longitude, infoWindow:schMsg};
                   $scope.schoolMarkers.push(marker);
+                };
+              }else if($scope.filter_schooltype == "Registered Schools"){
+                for (var i = 0; i < $scope.supported_schools.length; i++) {
+                  var temp = $scope.supported_schools[i].id;
+                  var schTotal = 0;
+
+                  for (var j = 0; j < $scope.school_registrations.length; j++) {
+                    if (temp == $scope.school_registrations[j].school){
+                      schTotal++;
+                    }
+                  };
+									
+									
+                  var schMsg = $scope.supported_schools[i].name + "<br/> Total registrations: " + schTotal;
+
+                  var marker = {latitude:$scope.supported_schools[i].latitude, longitude:$scope.supported_schools[i].longitude, infoWindow:schMsg};
+                  if(schTotal>0){
+										$scope.schoolMarkers.push(marker);
+									}
+									
                 };
               }
               //console.log($scope.schoolMarkers);
