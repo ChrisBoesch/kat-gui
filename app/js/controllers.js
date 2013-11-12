@@ -1602,11 +1602,11 @@ function ChallengeController($scope,$resource,$location,$cookieStore,$http,$rout
 		$scope.myStoryModel.query({}, function(response){
 			$scope.myStories = response;
 			for(var i=0;i<$scope.myStories.length;i++){
-				if($scope.myStories[i].published == false && $scope.myStories[i].archived == false && $scope.myStories[i].supported_paths.indexOf($scope.chaPathID) > -1){
+				if($scope.myStories[i].published == false && $scope.myStories[i].archived == false && $scope.myStories[i].supported_paths && $scope.myStories[i].supported_paths.indexOf($scope.chaPathID) > -1){
 					var aStory = {name: $scope.myStories[i].name, id: $scope.myStories[i].id};						
 					$scope.pubStories.push(aStory);
 				}
-				else if($scope.myStories[i].published == false && $scope.myStories[i].archived == false && $scope.myStories[i].supported_paths.length == 0){
+				else if($scope.myStories[i].published == false && $scope.myStories[i].archived == false && $scope.myStories[i].supported_paths && $scope.myStories[i].supported_paths.length == 0){
 					var aStory = {name: $scope.myStories[i].name, id: $scope.myStories[i].id};						
 					$scope.pubStories.push(aStory);
 				}				
