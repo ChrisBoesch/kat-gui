@@ -131,8 +131,8 @@ input:hover{
 									<div class="row">	
 										<div class="span4" ng-repeat="story in storylist" ng-init="addQuestColor()">
 											<label class="radio">
-											<input type="radio" style="visibility:hidden" ng-click="updateURL(storyid,difficulty,$parent.$parent.$parent.path_ID)" name="optionsRadios" ng-model="$parent.$parent.$parent.$parent.storyid" id="{{story.id}}" value="{{story.id}}">
-											<input class="well"type="image" ng-src="{{story.image}}" alt="" id="pathImg"/>
+											<input type="radio" style="visibility:hidden" ng-click="updateURL(story.id,$parent.difficulty,$parent.$parent.$parent.path_ID)" name="optionsRadios" ng-model="$parent.$parent.$parent.$parent.storyid" id="{{story.id}}" value="{{story.id}}">
+											<input class="well"type="image" ng-src="{{story.image}}" alt="" id="pathImg" ng-click="update_story(story.id)"/>
 											<br>
 											<h4>{{story.name}}</h4>
 											</label>
@@ -152,15 +152,15 @@ input:hover{
 						<div class="span12">
 				            <div class="span4" align="center">
 								<div style="margin-bottom:-15px">
-									<h4 class="well well-small bootCamp" ng-show="currentURL.indexOf('storyID') > -1 && currentURL.indexOf('path_ID') > -1 && currentURL.indexOf('difficulty') > -1">#2 Select {{passed_in_difficulty}}!</h4>
-									<h4 class="well well-small bootCamp" ng-show="currentURL.indexOf('storyID') == -1">#2 Select Difficulty!</h4>
+									
+									<h4 class="well well-small bootCamp">#2 Select Difficulty</h4>
 								</div>
 								<div class="well well-small">
 									<div id="levels"  style="height:220px;" class="btn-group " data-toggle="buttons-radio" align="center" ng-init="levels = [{'name':'Drag-n-Drop', 'id':'Drag-n-Drop'},{'name':'Easy','id':'Easy'},{'name':'Medium', 'id':'Medium'},{'name':'Hard','id':'Hard'}]">					
 										<span ng-repeat="item in levels">
 											<label class="radio">
-											<input style="visibility:hidden" type="radio" ng-click="updateURL(storyid,difficulty,$parent.$parent.$parent.path_ID)" ng-model="$parent.difficulty" name="difficultyLevel" value="{{item.name}}"/ >
-											<button type="button" class="btn btn-primary" style="height: 33px; width: 200px"  btn-radio="{{item.name}}">{{item.name}}
+											<input style="visibility:hidden" type="radio" ng-model="$parent.difficulty" name="difficultyLevel" value="{{item.name}}"/ >
+											<button type="button" class="btn btn-primary" style="height: 33px; width: 200px"  btn-radio="{{item.name}}" ng-click="update_difficulty(item.name)">{{item.name}}
 											</button>
 											</label>
 										</span>	
@@ -173,20 +173,20 @@ input:hover{
 									<h4 class="well well-small bootCamp">#3. Select {{path_name}}</h4>
 								</div>
 								<div class="well well-small">	
-									<div style="height:220px;overflow:auto;margin-top:5px" ng-hide="difficulty=='Drag-n-Drop'">
+									<div style="height:220px;overflow:auto;margin-top:5px" ng-hide="quest_difficulty=='Drag-n-Drop'">
 										<div ng-repeat="item in paths.paths" id="paths" ng-init="pathSelection()">
 											<label>
-												<input type="radio" style="visibility:hidden" ng-click="updateStroyList(storyid,difficulty,$parent.$parent.$parent.path_ID,paths.paths.length)" ng-model="$parent.$parent.$parent.path_ID" name="is_private" value="{{item.id}}" id="path">
-												<input class="well" type="image" ng-src="img/language/{{item.description.split(' ').join('_')}}.png" id="pathImg"/ >
+												<input type="radio" style="visibility:hidden" ng-model="$parent.$parent.$parent.path_ID" name="is_private" value="{{item.id}}" id="path">
+												<input class="well" type="image" ng-src="img/language/{{item.description.split(' ').join('_')}}.png" id="pathImg" ng-click="update_quest_path(item.id, item.name)"/>
 												<h4>{{item.name}}</h4>
 											</label>		
 										</div>
 									</div>
-									<div style="height:220px;overflow:auto;margin-top:5px" ng-show="difficulty=='Drag-n-Drop'">
+									<div style="height:220px;overflow:auto;margin-top:5px" ng-show="quest_difficulty=='Drag-n-Drop'">
 										<div  ng-repeat="item in mobile_paths" id="paths" ng-init="pathSelection()" >
 											<label>
-												<input type="radio" style="visibility:hidden" ng-click="updateStroyList(storyid,difficulty,$parent.$parent.$parent.path_ID,paths.paths.length)" ng-model="$parent.$parent.$parent.path_ID" name="is_private" value="{{item.path_id}}" id="path">
-												<input class="well" type="image" ng-src="img/language/{{item.description.split(' ').join('_')}}.png" id="pathImg"/ >
+												<input type="radio" style="visibility:hidden" ng-model="$parent.$parent.$parent.path_ID" name="is_private" value="{{item.path_id}}" id="path">
+												<input class="well" type="image" ng-src="img/language/{{item.description.split(' ').join('_')}}.png" id="pathImg" ng-click="update_quest_path(item.path_id, item.name)"/>
 												<h4>{{item.name}}</h4>
 											</label>
 										</div>
@@ -197,13 +197,14 @@ input:hover{
 								<table align="center">
 									<tr>
 										<td align="center">
-											</br></br>
-											<div  ng-show="!difficulty || !$parent.$parent.path_ID || !storyid || !player.nickname">
+											</br>
+											</br>
+											<div  ng-hide="storyid && quest_difficulty && quest_pathid && player.nickname">
 											<!-- <form action="#storyboard"> -->
 												<button class="btn disabled" style="width: 145px"><h1>Go!</h1></button>
 											<!-- </form> -->
 											</div>
-											<div  ng-show="difficulty && $parent.$parent.path_ID && storyid && player.nickname">
+											<div ng-show="storyid && quest_difficulty && quest_pathid && player.nickname">
 											<!-- <form action="#storyboard"> -->
 												<button class="btn btn-primary" ng-click="item.name='New Quest';create_quest(storyid,$parent.$parent.path_ID,difficulty)" style="width: 145px"><h1>Go!</h1></button>
 											<!-- </form> -->
@@ -211,7 +212,7 @@ input:hover{
 											<span class="label label-info" align="left">
 												<b><i>You are going to play</i></b>
 												</br></br>
-												Diffculty : {{difficulty}}
+												Diffculty : {{quest_difficulty}}
 												</br>
 												Path Name : {{quest_path_name}}
 												</br>
