@@ -458,14 +458,22 @@ function PathController($scope,$resource,$cookieStore,$location,$filter){
 			}
         });
 
-	}
+	};
+
+    $scope.log_test = function(){
+		console.log("hi");
+	};
 	
 	$scope.changePath = function (pathid){
 		$scope.path_ID = pathid;
+		console.log("The path id is "+pathid);
+		//Set the current path. 
 		$scope.update_path_progress(pathid);
 		if(pathid != "" && $scope.difficulty != ""){
-			$location.search({path_ID: pathid, difficulty: $scope.difficulty});
+			//$location.search({path_ID: pathid, difficulty: $scope.difficulty});
 		}
+		$scope.practice_path_name = "Updating";
+		
 		$scope.pathModel = $resource('/jsonapi/get_path_progress/:path_ID');
 		$scope.pathModel.get({"path_ID":pathid}, function(response){
 	    	$scope.practice_path_name = response.path.name;
@@ -488,7 +496,7 @@ function PathController($scope,$resource,$cookieStore,$location,$filter){
 		}
 		$scope.difficulty = difficulty;
 		if(difficulty != "" && $scope.path_ID != ""){
-			$location.search({path_ID: $scope.path_ID, difficulty: difficulty});
+			//$location.search({path_ID: $scope.path_ID, difficulty: difficulty});
 		}
 	};
 	
@@ -3299,13 +3307,52 @@ function StoryController($scope,$resource,$cookieStore,$location,$http,$filter,$
 			$scope.registration_response = data;
 		});	
 		$route.reload('story');
-	}
+	};
 
+	$scope.clear_path = function(){
+		$scope.quest_pathid = undefined;
+		$scope.quest_path_name = "<pick a supported path>";			
+		$('#pathSel input:image').removeClass('selected');
+		$('#small-pathSel input:image').removeClass('selected'); 
+	};
+	$scope.update_story = function(storyid){
+		//unselect path if not supported by story.
+		//Later you can grey out or change image to not supported. 
+		$scope.storyid = storyid;
+		$scope.updateURL($scope.storyid,$scope.quest_difficulty, $scope.quest_pathid);
+
+	};
+	$scope.update_difficulty = function(difficulty){
+		//Check to see if difficulty is chaning from drag-n-drop. 
+		if($scope.quest_difficulty=="Drag-n-Drop" && difficulty!="Drag-n-Drop" ){
+			console.log("Switching to normal");
+			$scope.clear_path();
+		}
+		if($scope.quest_difficulty!="Drag-n-Drop" && difficulty=="Drag-n-Drop" ){
+			console.log("Switching to Drag-n-Drop");
+			$scope.clear_path();
+		}
+		$scope.quest_difficulty = difficulty;
+		$scope.updateURL($scope.storyid,$scope.quest_difficulty, $scope.quest_pathid);
+	};
+
+	$scope.update_quest_path = function(pathID, pathName){
+		$scope.quest_pathid = pathID;
+	    $scope.quest_path_name = pathName;
+	    $scope.updateURL($scope.storyid,$scope.quest_difficulty, $scope.quest_pathid);
+	    //Clear story if not supported. 
+	    //Filter stories based on selected language. Show others as not supported for langauge or just filter out.   
+		//Or just always unselect story if not supported. 
+	};
+	
+	
+	//Break this up. 
 	$scope.updateURL=function(storyID,difficulty,path_ID){
 		$scope.update_path_flag = true;
-		if(storyID != "" && difficulty != "" && path_ID != ""){
-			$location.search({storyID: storyID,difficulty: difficulty,path_ID: path_ID});
-		}
+		console.log("storyID "+storyID);
+		console.log("difficulty "+difficulty);
+		console.log("path_ID "+path_ID);
+
 	    $scope.storyModel = $resource('/jsonapi/story/:storyID');
 	    $scope.storyModel.get({"storyID":storyID}, function(response){
             $scope.current_story_name = response.name;
@@ -3313,38 +3360,41 @@ function StoryController($scope,$resource,$cookieStore,$location,$http,$filter,$
             if($scope.supported_paths_story.length == 0){
             	$scope.update_path_flag = false;
 	    	}
-            for(var i=0;i<$scope.supported_paths_story.length;i++){
-				if($scope.supported_paths_story[i] == path_ID || $scope.update_path_flag == false){
+	    	//If path is supported, make update_path_flag false.
+            if($scope.update_path_flag){
+              for(var i=0;i<$scope.supported_paths_story.length;i++){
+				if($scope.supported_paths_story[i] == path_ID){
 					$scope.update_path_flag = false;
 					break;
 				}
+			  }
 			}
+			
 			if($scope.update_path_flag && path_ID != "" && path_ID != undefined){
-		    	$scope.storyid = undefined;
-		    	$scope.current_story_name = undefined;
-		    	$scope.updatedStoryList = [];
-				for(var i=0;i<$scope.pubStories.length;i++){
-					$scope.stringSupportPaths = JSON.stringify($scope.pubStories[i].supported_paths);
-					if($scope.pubStories[i].supported_paths.length == 0){
-						$scope.updatedStoryList.push($scope.pubStories[i]);
-					}
-					else if($scope.stringSupportPaths.indexOf(path_ID) >= 0){
-						$scope.updatedStoryList.push($scope.pubStories[i]);
-					}
-				}
-				$scope.questStoryList = $filter('groupBy')($scope.updatedStoryList, 3);
+		    	//$scope.storyid = undefined;
+		    	//$scope.current_story_name = undefined;
+		    	$scope.clear_path();
+		    	//$scope.updatedStoryList = [];
+				//for(var i=0;i<$scope.pubStories.length;i++){
+				//	$scope.stringSupportPaths = JSON.stringify($scope.pubStories[i].supported_paths);
+				//	if($scope.pubStories[i].supported_paths.length == 0){
+				//		$scope.updatedStoryList.push($scope.pubStories[i]);
+				//	}
+				//	else if($scope.stringSupportPaths.indexOf(path_ID) >= 0){
+				//		$scope.updatedStoryList.push($scope.pubStories[i]);
+				//	}
+				//}
+				//$scope.questStoryList = $filter('groupBy')($scope.updatedStoryList, 3);
 		    }
 	    });
+		//This is called on every setting update. Why? 
 	    $resource('/jsonapi/get_game_paths').get(function(response){
 	    	if(difficulty != "" && path_ID != ""){
 		  		if(difficulty == "Drag-n-Drop"){
 		  			for(var i=0;i<response.paths.length;i++){
 						if(response.paths[i].id == path_ID){
-							$('#pathSel input:image').removeClass('selected');
-							$('#small-pathSel input:image').removeClass('selected');   
-							$scope.path_ID = undefined;
-					  		$scope.quest_path_name = undefined;
-			    			$location.search({storyID: storyID,difficulty: difficulty,path_ID: undefined});
+							$scope.clear_path();
+			    			//$location.search({storyID: storyID,difficulty: difficulty,path_ID: undefined});
 			    			break;
 						}
 					}
@@ -3356,18 +3406,17 @@ function StoryController($scope,$resource,$cookieStore,$location,$http,$filter,$
 		  		if(difficulty != "Drag-n-Drop"){
 			  		for(var i=0;i<response.length;i++){
 						if(response[i].path_id == path_ID){
-							$('#pathSel input:image').removeClass('selected');
-							$('#small-pathSel input:image').removeClass('selected');
-							$scope.path_ID = undefined;
-					  		$scope.quest_path_name = undefined;
-			    			$location.search({storyID: storyID,difficulty: difficulty,path_ID: undefined});
+							$scope.clear_path();
+			    			//$location.search({storyID: storyID,difficulty: difficulty,path_ID: undefined});
 			    			break;
 						}
 					}
 			  	}
 		  	}
 	    });
-    }
+    
+
+    }//updateURL
 
     $scope.updateStroyList=function(storyID,difficulty,path_ID,pathCount){
 		if(storyID != "" && difficulty != "" && path_ID != ""){

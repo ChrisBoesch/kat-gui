@@ -111,8 +111,8 @@ li{ list-style:none; }
 						<div class="row">	
 							<div class="span4"  ng-repeat="path in paths" ng-init="practiceSelection()">
 								<label class="radio">
-									<input style="visibility:hidden" type="radio" ng-click="changePath($parent.pathid)" name="optionsRadios" ng-model="$parent.pathid" id="{{path.id}}" value="{{path.id}}" >
-									<input class="well"type="image" ng-src="img/language/{{path.description.split(' ').join('_')}}.png" alt="" id="pathImg"/>
+									<input style="visibility:hidden" type="radio" name="optionsRadios" ng-model="$parent.pathid" id="{{path.id}}" value="{{path.id}}" >
+									<input class="well" type="image" ng-src="img/language/{{path.description.split(' ').join('_')}}.png" alt="" id="pathImg" ng-click="changePath(path.id)"/>
 									<h6>{{path.name}}</h6>
 								</label>
 							</div>
@@ -132,7 +132,7 @@ li{ list-style:none; }
 							<div class="span4" ng-repeat="path in mobile_path" ng-init="practiceBeginnerSelection()">
 								<label class="radio">
 									<input style="visibility:hidden" type="radio" ng-click="changePath($parent.pathid)" name="optionsRadios" ng-model="$parent.pathid" id="{{path.id}}" value="{{path.path_id}}">
-									<input class="well"type="image" ng-src="img/language/{{path.description.split(' ').join('_')}}.png" alt="" id="pathImg"/>
+									<input class="well"type="image" ng-src="img/language/{{path.description.split(' ').join('_')}}.png" alt="" id="pathImg" ng-click="changePath(path.path_id)"/>
 									<h6>{{path.name}}</h6>
 								</label>
 							</div>
@@ -249,18 +249,18 @@ li{ list-style:none; }
 								<span class="label label-info" align="left">
 									<b><i>You are going to play</i></b>
 									</br></br>
-									Diffculty : {{difficulty}}
+									Path: {{practice_path_name}}
 									</br>
-									Path Name : {{practice_path_name}}
+									Diffculty: {{difficulty}}
 								</span>
 							</td></tr>
 							<tr><td>
 								</br>
-								<div align="center"><button class="btn btn-primary" ng-click="create_prac(lvl,5,lvlName)"><h5>Continue Level {{lvlName}}</h5></button></div>
+								<div ng-show="difficulty && path_ID" align="center"><button class="btn btn-primary" ng-click="create_prac(lvl,5,lvlName)"><h5>Continue Level {{lvlName}}</h5></button></div>
 							</td></tr>
 							<tr><td>
 								</br>
-								<div align="center"><button class="btn btn-primary" ng-click="continuePath(5);"><h5>Resolve Level {{lvlName}}</h5></button></div>
+								<div ng-show="difficulty && path_ID" align="center"><button class="btn btn-primary" ng-click="continuePath(5);"><h5>Resolve Level {{lvlName}}</h5></button></div>
 							</td></tr>
 						</table>
 					</div>
