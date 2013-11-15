@@ -459,10 +459,6 @@ function PathController($scope,$resource,$cookieStore,$location,$filter){
         });
 
 	};
-
-    $scope.log_test = function(){
-		console.log("hi");
-	};
 	
 	$scope.changePath = function (pathid){
 		$scope.path_ID = pathid;
