@@ -3384,6 +3384,7 @@ function StoryController($scope,$resource,$cookieStore,$location,$http,$filter,$
 		    }
 	    });
 		//This is called on every setting update. Why? 
+	    /*
 	    $resource('/jsonapi/get_game_paths').get(function(response){
 	    	if(difficulty != "" && path_ID != ""){
 		  		if(difficulty == "Drag-n-Drop"){
@@ -3410,6 +3411,7 @@ function StoryController($scope,$resource,$cookieStore,$location,$http,$filter,$
 			  	}
 		  	}
 	    });
+	*/
     
 
     }//updateURL
